@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>View Data</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/supabase.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            padding: 30px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        a {
+            text-decoration: none;
+            color: #4CAF50;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Registered Faces & Attendance</h1>
+
+<a href="dashboard.html">⬅ Back to Dashboard</a>
+
+<h2>Face Data</h2>
+<table id="faceTable">
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>Image</th>
+            <th>Filename</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<h2>Attendance Data</h2>
+<table id="attendanceTable">
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>Date</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script>
+    // ---------- Supabase Config ----------
+    const SUPABASE_URL = "https://pzfjuwkkymnjuptoxjyf.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_6fghcBjuwEfcwR8ux5ujTg_nUDuTl53";
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // ---------- Fetch Face Data ----------
+    async function loadFaceData() {
+        let { data, error } = await supabase.from("face_data").select("*");
+        if (error) {
+            console.error("Error fetching face data:", error);
+            return;
+        }
+
+        const tbody = document.querySelector("#faceTable tbody");
+        data.forEach(row => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td>${row.Email || row.user_id}</td>
+                <td><img src="https://pzfjuwkkymnjuptoxjyf.supabase.co/storage/v1/object/public/faces/${row.encoding}" width="80" /></td>
+                <td>${row.encoding}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    // ---------- Fetch Attendance Data ----------
+    async function loadAttendanceData() {
+        let { data, error } = await supabase.from("attendance").select("*");
+        if (error) {
+            console.error("Error fetching attendance:", error);
+            return;
+        }
+
+        const tbody = document.querySelector("#attendanceTable tbody");
+        data.forEach(row => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td>${row.Email || row.user_id}</td>
+                <td>${row.date}</td>
+                <td>${row.status}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    // ---------- Load both ----------
+    loadFaceData();
+    loadAttendanceData();
+</script>
+
+</body>
+</html>

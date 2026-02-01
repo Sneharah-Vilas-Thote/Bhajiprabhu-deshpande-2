@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Futuristic AI Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root{
+            --bg:#020617; --glass: rgba(255,255,255,0.04);
+            --accent: linear-gradient(90deg,#00f2ff,#7b2cff);
+            --cyan:#00f2ff; --muted:#9fb2c8;
+        }
+        *{box-sizing:border-box}
+        body{
+            margin:0; min-height:100vh;
+            display:flex;align-items:center;justify-content:center;
+            font-family:Inter,Segoe UI,system-ui,Arial;
+            background:
+              radial-gradient(800px 400px at 10% 10%, rgba(124,30,255,0.09), transparent 8%),
+              radial-gradient(600px 300px at 90% 90%, rgba(0,242,255,0.04), transparent 6%),
+              var(--bg);
+            color:#eaf6ff;
+        }
+
+        .card{
+            width:420px; max-width:94%;
+            background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+            border:1px solid rgba(0,242,255,0.06);
+            padding:28px; border-radius:14px;
+            box-shadow: 0 6px 40px rgba(3,10,18,0.6);
+            position:relative; overflow:hidden;
+        }
+
+        .brand{
+            display:flex; gap:12px; align-items:center; margin-bottom:18px;
+        }
+        .logo{
+            width:52px; height:52px; border-radius:10px;
+            background:linear-gradient(135deg,#00f2ff22,#7b2cff22);
+            display:flex;align-items:center;justify-content:center;
+            border:1px solid rgba(255,255,255,0.04);
+        }
+        .logo svg{filter: drop-shadow(0 2px 6px rgba(0,0,0,0.6));}
+
+        h1{font-size:18px;margin:0;color:var(--cyan);letter-spacing:1px}
+        p.sub{margin:4px 0 0;color:var(--muted);font-size:13px}
+
+        form{margin-top:18px; display:grid; gap:12px}
+        label{font-size:12px;color:var(--muted);display:flex;justify-content:space-between}
+        .field{
+            display:flex; gap:8px; align-items:center;
+            background:var(--glass); padding:10px 12px; border-radius:8px;
+            border:1px solid rgba(255,255,255,0.03);
+        }
+        input[type="email"], input[type="password"]{
+            background:transparent; border:0; outline:0; color:inherit; font-size:14px; flex:1;
+        }
+
+        .controls{display:flex; gap:10px; align-items:center; margin-top:12px}
+        button.login{
+            flex:1; padding:10px 14px; border-radius:8px;
+            background:var(--accent); color:#001219; font-weight:700; border:0; cursor:pointer;
+            display:inline-flex; align-items:center; justify-content:center; gap:10px;
+            transition:transform .12s ease;
+        }
+        button.login:active{transform:translateY(1px)}
+        button.login[disabled]{opacity:0.6; cursor:not-allowed; transform:none}
+
+        .btn-ghost{background:transparent; color:var(--muted); border:1px solid rgba(255,255,255,0.03); padding:8px 12px; border-radius:8px; cursor:pointer}
+
+        .tiny{font-size:12px;color:var(--muted); text-align:center; margin-top:10px}
+        .link{color:var(--cyan); cursor:pointer; text-decoration:underline; font-size:12px}
+
+        /* progress */
+        .progress-wrap{height:6px;background:rgba(255,255,255,0.03);border-radius:999px;overflow:hidden;margin-top:10px}
+        .progress-fill{height:100%; background:linear-gradient(90deg,#00f2ff,#7b2cff); width:0%; transition:width .35s ease}
+
+        /* toast */
+        .toast{position:fixed; left:50%; transform:translateX(-50%); bottom:28px; background:#00121a; color:#bfefff; padding:10px 16px; border-radius:10px; box-shadow:0 8px 30px rgba(0,0,0,0.6); display:none}
+        .toast.show{display:block}
+
+        .show-pass{background:transparent;border:0;color:var(--muted);cursor:pointer;font-size:13px}
+
+        /* Biometric Popup Styling */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(2, 6, 23, 0.9);
+            display: none; /* Default hidden */
+            align-items: center; justify-content: center;
+            z-index: 9999;
+            backdrop-filter: blur(10px);
+        }
+        .modal-content {
+            background: #0a192f;
+            border: 2px solid #00f2ff;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.3);
+        }
+        #video-container {
+            position: relative;
+            width: 320px; height: 240px;
+            margin: 20px auto;
+            border: 1px solid #7b2cff;
+            overflow: hidden;
+        }
+        .scan-bar {
+            position: absolute;
+            width: 100%; height: 4px;
+            background: #00f2ff;
+            box-shadow: 0 0 15px #00f2ff;
+            animation: scanMove 2s infinite linear;
+        }
+        @keyframes scanMove {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="card" role="main" aria-labelledby="title">
+    <div class="brand">
+        <div class="logo" aria-hidden="true">
+    <img src="https://cdn.pixabay.com/photo/2023/02/05/01/09/artificial-intelligence-7768524_1280.jpg" 
+         alt="AI Logo" 
+         style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
+</div>
+        <div>
+            <h1 id="title">AI-Powered Secure Login</h1>
+            <p class="sub">Verify identity using email & secure access key</p>
+        </div>
+    </div>
+
+    <form id="loginForm" autocomplete="on" novalidate>
+        <div>
+            <label for="email">Email <span id="emailErr" style="color:#ff8b8b;display:none">Invalid</span></label>
+            <div class="field">
+                <input id="email" name="email" type="email" placeholder="you@company.com" required aria-required="true" />
+            </div>
+        </div>
+
+        <div>
+            <label for="password">Access Key</label>
+            <div class="field">
+                <input id="password" name="password" type="password" placeholder="Enter access key" required aria-required="true" />
+                <button type="button" class="show-pass" id="togglePass" aria-label="Toggle password">Show</button>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="login" id="loginBtn" type="submit" aria-live="polite">
+                <span id="btnLabel">Login Securely</span>
+                <svg id="spinner" width="18" height="18" viewBox="0 0 24 24" fill="none" style="display:none">
+                    <circle cx="12" cy="12" r="10" stroke="#001219" stroke-width="3" stroke-linecap="round" stroke-dasharray="60" stroke-dashoffset="30" />
+                </svg>
+            </button>
+
+            <button type="button" class="btn-ghost" id="forgotBtn">Forgot?</button>
+        </div>
+
+        <div class="progress-wrap" aria-hidden="true" style="display:none">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <div class="tiny">Or use AI biometrics <span class="link" id="biometric">Launch face scan</span></div>
+    </form>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<!-- Biometric modal -->
+<div class="modal-overlay" id="biometricModal" aria-hidden="true">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="bioTitle">
+        <h2 id="bioTitle" style="color: #00f2ff; font-size: 18px;">AI FACIAL SCANNING...</h2>
+        <div id="video-container">
+            <div class="scan-bar" aria-hidden="true"></div>
+            <video id="webcam" autoplay playsinline style="width: 100%; height: 100%; object-fit: cover;"></video>
+        </div>
+        <p id="status-text" style="color: #9fb2c8; font-size: 14px;">Analyzing Biometric Data...</p>
+        <button class="btn-ghost" type="button" onclick="closeModal()">Cancel</button>
+    </div>
+</div>
+
+<!-- Supabase SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+    // Replace these with your project's values (keep service_role_key secret; use only anon publishable key on client)
+    const SUPABASE_URL = 'https://pzfjuwkkymnjuptoxjyf.supabase.co'; // e.g. https://xyz.supabase.co
+    const SUPABASE_ANON_KEY = 'sb_publishable_6fghcBjuwEfcwR8ux5ujTg_nUDuTl53'; // sb_publishable_...
+
+    // Create client with a non-shadowing variable name
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // Helpers
+    const el = id => document.getElementById(id);
+    const showToast = (msg, timeout = 3000) => {
+        const t = el('toast');
+        t.textContent = msg;
+        t.classList.add('show');
+        clearTimeout(t._timer);
+        t._timer = setTimeout(() => t.classList.remove('show'), timeout);
+    };
+
+    function closeModal() {
+        const modal = document.getElementById('biometricModal');
+        modal.style.display = 'none';
+        const video = document.getElementById('webcam');
+        const stream = video && video.srcObject;
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+            video.srcObject = null;
+        }
+    }
+
+    // DOM interactions
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = el('loginForm');
+        const email = el('email');
+        const password = el('password');
+        const btn = el('loginBtn');
+        const btnLabel = el('btnLabel');
+        const spinner = el('spinner');
+        const progressFill = el('progressFill');
+        const progressWrap = document.querySelector('.progress-wrap');
+        const togglePass = el('togglePass');
+        const forgotBtn = el('forgotBtn');
+
+        let progressInterval = null;
+
+        togglePass.addEventListener('click', () => {
+            const t = password;
+            t.type = t.type === 'password' ? 'text' : 'password';
+            togglePass.textContent = t.type === 'password' ? 'Show' : 'Hide';
+        });
+
+        forgotBtn.addEventListener('click', async () => {
+            const mail = prompt('Enter your email for reset');
+            if(!mail || !mail.includes('@')) return showToast('Enter a valid email');
+            const { error } = await supabaseClient.auth.resetPasswordForEmail(mail, {
+                redirectTo: window.location.origin + '/reset-complete.html'
+            });
+            if (error) showToast('Error: ' + error.message);
+            else showToast('Password reset sent. Check your inbox.');
+        });
+
+        form.addEventListener('submit', async (ev) => {
+            ev.preventDefault();
+            // simple client validation
+            if(!email.value || !email.value.includes('@')){
+                el('emailErr').style.display = 'inline';
+                return showToast('Enter a valid email address');
+            }
+            el('emailErr').style.display = 'none';
+            if(!password.value || password.value.length < 6){
+                return showToast('Access Key must be at least 6 characters');
+            }
+
+            // UI lock & progress start
+            btn.setAttribute('disabled', '');
+            spinner.style.display = 'inline-block';
+            btnLabel.textContent = 'Verifying...';
+            progressWrap.style.display = 'block';
+            progressFill.style.width = '6%';
+
+            // progress simulation
+            let p = 6;
+            clearInterval(progressInterval);
+            progressInterval = setInterval(() => {
+                p += Math.floor(Math.random() * 12) + 4;
+                if (p > 96) p = 96;
+                progressFill.style.width = p + '%';
+            }, 300);
+
+            try {
+                const { data, error } = await supabaseClient.auth.signInWithPassword({
+                    email: email.value.trim(),
+                    password: password.value
+                });
+
+                clearInterval(progressInterval);
+                if (error) {
+                    progressFill.style.width = '0%';
+                    progressWrap.style.display = 'none';
+                    showToast('Access denied: ' + error.message);
+                    btn.removeAttribute('disabled');
+                    spinner.style.display = 'none';
+                    btnLabel.textContent = 'Login Securely';
+                    return;
+                }
+
+                // success
+                progressFill.style.width = '100%';
+                showToast('Identity verified. Redirecting...');
+                // store session (optional, secure apps should use server-side sessions)
+                if (data && data.session) {
+                    localStorage.setItem('sb_session', JSON.stringify(data.session));
+                }
+                setTimeout(() => window.location.href = 'dashboard.html', 900);
+
+            } catch (err) {
+                clearInterval(progressInterval);
+                progressFill.style.width = '0%';
+                progressWrap.style.display = 'none';
+                showToast('Unexpected error. Try again.');
+                console.error(err);
+            } finally {
+                btn.removeAttribute('disabled');
+                spinner.style.display = 'none';
+                btnLabel.textContent = 'Login Securely';
+            }
+        });
+
+        // Replace simple demo click with biometric modal + camera demo
+        document.getElementById('biometric').addEventListener('click', async () => {
+            const modal = document.getElementById('biometricModal');
+            const video = document.getElementById('webcam');
+            const status = document.getElementById('status-text');
+
+            modal.style.display = 'flex';
+            status.textContent = 'Analyzing Biometric Data...';
+            status.style.color = '#9fb2c8';
+
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                showToast('Camera not supported in this browser.');
+                closeModal();
+                return;
+            }
+
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                video.srcObject = stream;
+
+                setTimeout(() => {
+                    status.textContent = "Matching with Database...";
+                    status.style.color = "#7b2cff";
+                }, 1500);
+
+                setTimeout(() => {
+                    status.textContent = "Identity Verified!";
+                    status.style.color = "#00f2ff";
+                    showToast("Access Granted: Admin");
+                    // stop camera then redirect
+                    closeModal();
+                    setTimeout(() => window.location.href = 'dashboard.html', 1000);
+                }, 4000);
+
+            } catch (err) {
+                console.error(err);
+                showToast("Camera Error: Please allow access");
+                closeModal();
+            }
+        });
+    });
+</script>
+</body>
+</html>
