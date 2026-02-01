@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>College Management System</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    .section { display: none; }
+    .active { display: block; }
+  </style>
+</head>
+
+<body class="bg-gray-100">
+<div class="flex min-h-screen">
+
+  <!-- Sidebar -->
+  <aside class="w-64 bg-slate-900 text-white p-6">
+    <h1 class="text-2xl font-bold text-blue-400">🎓 College Panel</h1>
+    <nav class="mt-6 space-y-4">
+      <button onclick="showSection('dashboard')" class="block w-full text-left hover:text-blue-400">Dashboard</button>
+      <button onclick="showSection('attendance')" class="block w-full text-left hover:text-blue-400">Attendance</button>
+      <button onclick="showSection('students')" class="block w-full text-left hover:text-blue-400">Students</button>
+      <button onclick="showSection('face')" class="block w-full text-left hover:text-blue-400">📸 Face Authentication</button>
+    </nav>
+  </aside>
+
+  <!-- Main -->
+  <main class="flex-1 p-8">
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="section active">
+      <h2 class="text-2xl font-bold">Dashboard</h2>
+      <p class="mt-2">Welcome to College Management System</p>
+    </div>
+
+    <!-- Attendance -->
+    <div id="attendance" class="section">
+      <h2 class="text-2xl font-bold mb-4">Attendance</h2>
+
+      <input id="name" class="border p-2 rounded" placeholder="Name">
+      <input id="roll" class="border p-2 rounded ml-2" placeholder="Roll">
+      <input id="class" class="border p-2 rounded ml-2" placeholder="Class">
+
+      <div class="mt-4">
+        <button onclick="markAttendance('Present')" class="bg-green-600 text-white px-4 py-2 rounded">Present</button>
+        <button onclick="markAttendance('Absent')" class="bg-red-600 text-white px-4 py-2 rounded">Absent</button>
+      </div>
+
+      <table class="w-full mt-4 bg-white">
+        <thead class="bg-gray-200">
+          <tr>
+            <th class="p-2">Name</th>
+            <th class="p-2">Roll</th>
+            <th class="p-2">Class</th>
+            <th class="p-2">Status</th>
+          </tr>
+        </thead>
+        <tbody id="attendanceTable"></tbody>
+      </table>
+    </div>
+
+    <!-- Students List -->
+    <div id="students" class="section">
+      <h2 class="text-2xl font-bold mb-4">Student List</h2>
+
+      <table class="w-full bg-white shadow">
+        <thead class="bg-gray-200">
+          <tr>
+            <th class="p-2">Roll No</th>
+            <th class="p-2">Name</th>
+            <th class="p-2">Class</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="p-2">1</td><td class="p-2">Rahul Patil</td><td class="p-2">12th Sci</td></tr>
+          <tr><td class="p-2">2</td><td class="p-2">Sneha Deshmukh</td><td class="p-2">12th Sci</td></tr>
+          <tr><td class="p-2">3</td><td class="p-2">Amit Kulkarni</td><td class="p-2">11th Arts</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Face Authentication -->
+    <div id="face" class="section">
+      <h2 class="text-2xl font-bold mb-4">Face Authentication</h2>
+      <video id="camera" autoplay class="w-96 border"></video>
+      <br>
+      <button onclick="startCamera()" class="bg-blue-600 text-white px-4 py-2 mt-2 rounded">
+        Verify Face
+      </button>
+    </div>
+
+  </main>
+</div>
+
+<script>
+function showSection(sectionId) {
+  document.querySelectorAll(".section").forEach(sec => {
+    sec.classList.remove("active");
+  });
+  document.getElementById(sectionId).classList.add("active");
+}
+
+function markAttendance(status) {
+  const name = nameInput = document.getElementById("name").value;
+  const roll = document.getElementById("roll").value;
+  const cls = document.getElementById("class").value;
+
+  if(!name || !roll || !cls){
+    alert("Fill all fields");
+    return;
+  }
+
+  const row = `
+    <tr>
+      <td class="p-2">${name}</td>
+      <td class="p-2">${roll}</td>
+      <td class="p-2">${cls}</td>
+      <td class="p-2">${status}</td>
+    </tr>
+  `;
+  document.getElementById("attendanceTable").innerHTML += row;
+}
+
+function startCamera() {
+  navigator.mediaDevices.getUserMedia({ video: true })
+    .then(stream => {
+      document.getElementById("camera").srcObject = stream;
+    });
+}
+</script>
+
+</body>
+</html>
